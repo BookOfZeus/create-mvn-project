@@ -1,0 +1,22 @@
+# IntelliJ
+.idea
+out/
+build/
+build.properties
+target/
+shared
+gen
+
+# IML files
+*.iml
+
+## File-based project format:
+*.iws
+
+# Specific files
+.attach*
+
+# Source files
+*.tar.gz
+*.jar
+garbage-collection.log

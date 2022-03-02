@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Install
+#
+# sudo curl --url https://.... --output /usr/bin/create-mvn-project && chmod +x /usr/bin/create-mvn-project
+
+
+# Run 
+#
+# create-mvn-project -g <groupid> -a <artifact>
+
+
+while getopts g:a:d flag
+do
+    case "${flag}" in
+        g) GROUP=${OPTARG};;
+        a) ARTIFACT=${OPTARG};;
+        d) DESTINATION=${OPTARG};;
+    esac
+done
+
+# functions
+
+function showHelp
+{
+    echo "Create a base maven project.
+    
+Usage: ${0##*/} [OPTION] [DESTINATION]
+
+Mandatory arguments:
+  -g        The Group Id
+            The project group id, eg: com.domain.application
+  
+  -a        The Artifact Id
+            The project artifact id, eg: my-application
+  
+  -d        The destination folder
+            If ommited, the destination folder is current folder
+
+Look for updates at: https://github.com/ericpotvin/create-maven-project
+
+"
+}
+
+if [[ -z "${DESTINATION}" ]]; then
+    DESTINATION=$(pwd)
+fi
+
+if [[ -z "${GROUP}" ]]; then
+    showHelp
+    exit 1
+fi
+
+if [[ -z "${ARTIFACT}" ]]; then
+    showHelp
+    exit 1
+fi
+
+echo "Building:"
+echo
+echo " Group Id:    ${GROUP}"
+echo " Artifact Id: ${ARTIFACT}"
+echo " Destination: ${DESTINATION}"
+echo
+
+echo "Continue with creating project? [ enter = yes ]"
+read -s -n1 CONFIRM
+
+
+if [[ "$CONFIRM" = "" ]]; then
+
+    mvn archetype:generate \
+        -DgroupId="${GROUP}" \
+        -DartifactId="${ARTIFACT}" \
+        -DoutputDirectory="${DESTINATION}" \
+        -DarchetypeGroupId=com.bookofzeus \
+        -DarchetypeArtifactId=archetype \
+        -DarchetypeVersion=1.0.0 \
+        -DinteractiveMode=false \
+        -B -q
+
+else
+
+    echo "Aborted"
+
+fi
